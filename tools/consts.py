@@ -1,0 +1,30 @@
+from addict import Dict as AttrDict
+
+
+cmds = AttrDict({
+  '0x000': 'PSR',
+  '0x001': 'PWR',
+  '0x002': 'POF',
+  '0x003': 'PFS',
+  '0x004': 'PON',
+  '0x006': 'BTST',
+  '0x012': 'DRF',
+  '0x013': 'DTM2',
+  '0x014': 'DTMW',
+  '0x020': 'LUT_KWVCOM',
+  '0x022': 'LUT_KW',
+  '0x026': 'LUT_FT',
+  '0x030': 'LPRD',
+  '0x041': 'TSE',
+  '0x040': 'TSC',
+  '0x050': 'CDI',
+  '0x061': 'TRES',
+  '0x062': 'GDS',
+  '0x063': 'GBS',
+  '0x064': 'GSS',
+  '0x082': 'VDCS',
+  '0x084': 'VBDS',
+  '0x0A2': 'ROTP',
+  '0x0E4': 'LVSEL',
+  '0x0DF': 'DF',
+})
