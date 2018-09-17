@@ -22,6 +22,7 @@ cmds = AttrDict({
   '0x062': 'GDS',
   '0x063': 'GBS',
   '0x064': 'GSS',
+  '0x070': 'REV',
   '0x082': 'VDCS',
   '0x084': 'VBDS',
   '0x0A2': 'ROTP',
