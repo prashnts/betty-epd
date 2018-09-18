@@ -15,10 +15,23 @@ void main (void) {
   pinMode(SDA, OUTPUT);
   pinMode(CSB1, OUTPUT);
   pinMode(BUSY, INPUT);
-        
 
+
+  printf("--> Init");
   EPD_Init();        // second Initial
+  printf("--> Show White");
   EPD_Display_White();
+  delay(1000);
+  printf("--> Show Rect Black");
+  EPD_Display_Partial_Black();
+  delay(1000);
+  printf("--> Show Black");
   EPD_Display_Black();
+  delay(1000);
+  printf("--> Show Rect White");
+  EPD_Display_Partial_White();
+  delay(1000);
+  printf("--> Show White");
   EPD_Display_White();
-} 
+  delay(1000);
+}

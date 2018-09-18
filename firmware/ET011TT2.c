@@ -64,7 +64,7 @@ void EInk_Parameter_Initial() {
 
   spi_9b_send_9b(PSR);
   spi_9b_send(1, 0x0B);
-  spi_9b_send(1, 0x86);
+  spi_9b_send(1, 0x06); // Change 0x86 to 0x06
 
   spi_9b_send_9b(PFS);
   spi_9b_send(1, 0x00);
@@ -217,7 +217,7 @@ void Upload_Temperature_LUT(void) {
 void EPD_Display_White(void) {
   unsigned long i;
 
-  Upload_Temperature_LUT();
+  // Upload_Temperature_LUT();
 
   spi_9b_send_9b(DTMW);
   spi_9b_send(1, 0x00); // X  update window x_start
@@ -254,7 +254,7 @@ void EPD_Display_White(void) {
 void EPD_Display_Black(void) {
   unsigned long i;
 
-  Upload_Temperature_LUT();
+  // Upload_Temperature_LUT();
 
   spi_9b_send_9b(DTMW);
   spi_9b_send(1, 0x00); // X  update window x_start
@@ -291,15 +291,15 @@ void EPD_Display_Black(void) {
 void EPD_Display_Partial_White(void) {
   unsigned long i;
 
-  Upload_Temperature_LUT();
+  // Upload_Temperature_LUT();
 
   spi_9b_send_9b(DTMW);
   spi_9b_send(1, 0x14); // X  update window x_start
   spi_9b_send(1, 0x00); // Y  update window y_start
   spi_9b_send(1, 0x14);
-  spi_9b_send(1, 0x27); // W  update window width = 40 (0x0027)
+  spi_9b_send(1, 0x64); // W  update window width = 40 (0x0027)
   spi_9b_send(1, 0x00); // L  update window width = 40 (0x0027)
-  spi_9b_send(1, 0x27);
+  spi_9b_send(1, 0x64);
 
   spi_9b_send_9b(DTM2);
   for (i = 0; i < byte_counter; i++) {
@@ -334,9 +334,9 @@ void EPD_Display_Partial_Black(void) {
   spi_9b_send(1, 0x14); // X  update window x_start
   spi_9b_send(1, 0x00); // Y  update window y_start
   spi_9b_send(1, 0x14);
-  spi_9b_send(1, 0x27); // W  update window width = 40 (0x0027)
+  spi_9b_send(1, 0x64); // W  update window width = 40 (0x0027)
   spi_9b_send(1, 0x00); // L  update window width = 40 (0x0027)
-  spi_9b_send(1, 0x27);
+  spi_9b_send(1, 0x64);
 
   spi_9b_send_9b(DTM2);
   for (i = 0; i <= byte_counter; i++) {
