@@ -127,6 +127,19 @@ void EInk_Parameter_Initial() {
   spi_9b_send_9b(DF); // For REGAL
   spi_9b_send(1, 0x1F);
 }
+
+void EPD_Rev() {
+  LOG_INFO("Reading Chip Revision")
+  unsigned char lut_v1, lut_v2;
+  // Send to Register at 0x70
+  spi_9b_send_9b(0b01110000);
+
+  lut_v1 = spi_9b_get();
+  lut_v2 = spi_9b_get();
+
+  LOG_INFO("LUT Versions: v1=%x, v2=%x", lut_v1, lut_v2);
+}
+
 //==============================================================================
 // Waveform Loading
 //==============================================================================
