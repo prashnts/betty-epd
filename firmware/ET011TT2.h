@@ -1,6 +1,14 @@
 #ifndef __ET011TT2_H__
 #define __ET011TT2_H__
 
+#include <stdio.h>
+#include <wiringPi.h>
+
+#include "pin_rpi.h"
+#include "spi.h"
+#include "logger.h"
+
+
 /**********************************
 Constant set
 **********************************/

@@ -1,8 +1,4 @@
-#define __ET011TT2_C__
-
-#include "pin_rpi.h"
 #include "ET011TT2.h"
-#include "delay.h"
 
 //==============================================================================
 // Check Busy
@@ -21,31 +17,29 @@ void check_busy_low(void) // If BUSYN=1 then waiting
 //==============================================================================
 // EPD initial
 //==============================================================================
-void spi_9b_init(void) {
-  SCL_L;
-  SDA_H;
-  CSB_H;
-  CSB1_H;
-  BS_H;
-  delay(10); // 5+(1+1)*6+3 = 20 us
-}
+
 
 void EPD_Init(void) {
+  LOG_INFO("Initializing EPD")
   spi_9b_init();
+
   RSTN_L; // Reset
   delay(100);
   RSTN_H;
   delay(1000);
 
-  byte_counter = 14400; // 240*240(pixel)/4(pixel per byte)
+  // 240*240(pixel)/4(pixel per byte)
+  byte_counter = 14400;
 
   EInk_Parameter_Initial();
 
   spi_9b_send_9b(POF);
   check_busy_low();
+  LOG_INFO("Initialized EPD")
 }
 
 void EInk_Parameter_Initial() {
+  LOG_INFO("Setting EPD Parameters")
 
   spi_9b_send_9b(BTST);
   spi_9b_send(1, 0x17);
@@ -110,6 +104,9 @@ void EInk_Parameter_Initial() {
   VcomOTP = (hun * 100 + ten * 10 + sim) / 5 - 2;
   //////////////////////////////////
 
+  LOG_INFO("OTP Vcom=%x", VcomOTP);
+
+
   spi_9b_send_9b(VDCS);
   spi_9b_send(1, VcomOTP);
 
@@ -144,73 +141,6 @@ void EPD_Load_LUT2(unsigned int LUT, unsigned char const *LUT_Value,
   }
 }
 
-void Upload_Temperature_LUT(void) {
-
-  unsigned long TemperatureAddress;
-  unsigned long i = 0;
-  unsigned char TemperatureAddress_23_16;
-  unsigned int TemperatureAddress_15_0;
-
-  int Temp = 0;
-
-  spi_9b_send_9b(TSC);
-  check_busy_high();
-  Temp = (int)spi_9b_get();
-  spi_9b_get();
-
-  if (Temp < 3)
-    i = 0;
-  else if (Temp < 7)
-    i = 1;
-  else if (Temp < 10)
-    i = 2;
-  else if (Temp < 13)
-    i = 3;
-  else if (Temp < 17)
-    i = 4;
-  else if (Temp < 20)
-    i = 5;
-  else if (Temp < 23)
-    i = 6;
-  else if (Temp < 27)
-    i = 7;
-  else if (Temp < 31)
-    i = 8;
-  else if (Temp < 35)
-    i = 9;
-  else if (Temp <= 40)
-    i = 10;
-  else if (Temp <= 45)
-    i = 11;
-  else if (Temp <= 50)
-    i = 12;
-  else
-    i = 0;
-
-  if (WF_MODE == GC4_Mode)
-    TemperatureAddress = Temperature + i * 0x02A0;
-  else if (WF_MODE == GU4_Mode) {
-    i = i + 13;
-    TemperatureAddress = Temperature + i * 0x02A0;
-  } else {
-    i = i + 26;
-    TemperatureAddress = Temperature + i * 0x02A0;
-  }
-
-  //====================Set your own flash
-  //setting=====================================================
-  TemperatureAddress_15_0 = (unsigned int)TemperatureAddress;
-  TemperatureAddress_23_16 = (unsigned char)(TemperatureAddress >> 16);
-  ReadData(TemperatureAddress_23_16, TemperatureAddress_15_0, SPIdataBuff,
-           Temperature_LUT_Counter); // Load waveform from flash to SRAM
-                                     // (SPIdataBuff).
-  //===================================================================================================
-
-  // Load waveform data from SRAM
-  EPD_Load_LUT2(LUT_KWVCOM, &SPIdataBuff[0], 32);
-  EPD_Load_LUT2(LUT_KW, &SPIdataBuff[32], 512);
-  EPD_Load_LUT2(LUT_FT, &SPIdataBuff[544], 128);
-}
 //==============================================================================
 // EPD Display
 //==============================================================================
@@ -328,7 +258,7 @@ void EPD_Display_Partial_White(void) {
 void EPD_Display_Partial_Black(void) {
   unsigned long i;
 
-  Upload_Temperature_LUT();
+  // Upload_Temperature_LUT();
 
   spi_9b_send_9b(DTMW);
   spi_9b_send(1, 0x14); // X  update window x_start
@@ -361,83 +291,7 @@ void EPD_Display_Partial_Black(void) {
   spi_9b_send_9b(POF);
   check_busy_low();
 }
-//==============================================================================
-// SPI Transmission Protocol
-//==============================================================================
-void spi_9b_send_9b(unsigned int dat) {
-  if ((dat & DATA_MASK) == DATA_MASK)
-    spi_9b_send(DCX_DATA, (unsigned char)dat);
-  else
-    spi_9b_send(DCX_CMD, (unsigned char)dat);
-}
 
-void spi_9b_send(unsigned int dcx, unsigned char dat) {
-  unsigned char i;
-
-  CSB_L;
-
-  delay(1);
-  if (dcx)
-    SDA_H; // 1 for DCX_DATA
-  else
-    SDA_L; // 0 for DCX_CMD
-  SCL_H;
-  delay(1);
-  SCL_L;
-  delay(1);
-  for (i = 0; i < 8; i++) {
-    if (dat & 0x80) {
-      SDA_H;
-    } else {
-      SDA_L;
-    }
-    delay(1);
-    SCL_H;
-    delay(1);
-    SCL_L;
-    dat = dat << 1;
-  }
-  SDA_L;
-  delay(1);
-
-  CSB_H;
-
-  delay(1);
-}
-
-unsigned char spi_9b_get(void) {
-  int i;
-  unsigned char DATA_BUF = 0x00;
-
-  CSB_L;
-
-  delay(1);
-  SDA_H; // 1 for data
-  delay(1);
-  SCL_H;
-  delay(1);
-  SCL_L;
-  delay(1);
-  pinMode(SDA, INPUT);
-  delay(3);
-  for (i = 0; i < 8; i++) {
-    DATA_BUF = DATA_BUF << 1;
-    SCL_H;
-    if (SDA_IN)
-      DATA_BUF |= 0x01;
-    SCL_L;
-    delay(1);
-  }
-  pinMode(SDA, OUTPUT);
-  SDA_L;
-
-  delay(1);
-
-  CSB_H;
-
-  delay(1);
-  return DATA_BUF;
-}
 //==============================================================================
 // Data type transfer
 //============================================================================================
