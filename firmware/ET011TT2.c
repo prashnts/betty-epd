@@ -140,6 +140,24 @@ void EPD_Rev() {
   LOG_INFO("LUT Versions: v1=%x, v2=%x", lut_v1, lut_v2);
 }
 
+void EPD_Status() {
+  LOG_INFO("Reading EPD Status")
+
+  unsigned char status;
+
+  // Write to register 0x71
+  spi_9b_send_9b(0b01110001);
+
+  status = spi_9b_get();
+
+  printf("-> EPD I2C Error:\t%d \r\n", status & 0b00100000);
+  printf("-> EPD I2C Busy:\t%d \r\n", status & 0b00010000);
+  printf("-> EPD Data Flag:\t%d \r\n", status & 0b00001000);
+  printf("-> EPD PON:\t%d \r\n", status & 0b00000100);
+  printf("-> EPD POF:\t%d \r\n", status & 0b00000010);
+  printf("-> EPD BUSYN:\t%d \r\n", status & 0b00000001);
+}
+
 //==============================================================================
 // Waveform Loading
 //==============================================================================

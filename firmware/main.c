@@ -37,4 +37,6 @@ void main (void) {
 
   // Read Revision value
   EPD_Rev();
+  // Read Status
+  EPD_Status();
 }
