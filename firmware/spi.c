@@ -1,7 +1,7 @@
 #include "spi.h"
 
 void spi_9b_init(void) {
-  LOG_DEBUG("Initializing 9bit SPI")
+  LOG_DEBUG("Initializing 9bit SPI");
   SCL_L;
   SDA_H;
   CSB_H;
@@ -11,17 +11,17 @@ void spi_9b_init(void) {
 }
 
 void spi_9b_send_9b(unsigned int dat) {
+  LOG_DEBUG("Sending as Data/CMD: %x", dat);
   if ((dat & DATA_MASK) == DATA_MASK) {
-    LOG_DEBUG("Sending as Data");
     spi_9b_send(DCX_DATA, (unsigned char)dat);
   } else {
-    LOG_DEBUG("Sending as Command");
     spi_9b_send(DCX_CMD, (unsigned char)dat);
   }
 }
 
 void spi_9b_send(unsigned int dcx, unsigned char dat) {
   unsigned char i;
+  // LOG_DEBUG("Send over SPI: %x", dat);
 
   CSB_L;
 
@@ -57,8 +57,6 @@ void spi_9b_send(unsigned int dcx, unsigned char dat) {
   delayMicroseconds(20);
   CSB_H;
   delayMicroseconds(20);
-
-  LOG_DEBUG("Send over SPI: %x", dat);
 }
 
 unsigned char spi_9b_get(void) {
