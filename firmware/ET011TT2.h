@@ -70,6 +70,8 @@ Constant set
 #define Temperature10_15_0     0x2C00
 
 #define Temperature_LUT_Counter   672
+
+#define BYTE_COUNTER    14400
 //===========================================
 
 #endif
@@ -82,28 +84,32 @@ Constant set
 #endif
 
 __ET011TT2_EXTERN__ void EPD_Init(void);
-__ET011TT2_EXTERN__ void EPD_Load_LUT2(unsigned int LUT, unsigned char const *LUT_Value, unsigned int LUT_Counter);
-__ET011TT2_EXTERN__ void spi_9b_send_9b(unsigned int dat);
-__ET011TT2_EXTERN__ void spi_9b_send(unsigned int dcx,unsigned char dat);
-__ET011TT2_EXTERN__ unsigned char spi_9b_get(void);
+__ET011TT2_EXTERN__ void EPD_Load_LUT2(unsigned int lut_type, unsigned short *lut_buffer, unsigned int size);
 __ET011TT2_EXTERN__ void Upload_Temperature_LUT(void);
 __ET011TT2_EXTERN__ void EPD_Display_White(void);
 __ET011TT2_EXTERN__ void EPD_Display_Black(void);
 __ET011TT2_EXTERN__ void EPD_Display_Partial_White(void);
 __ET011TT2_EXTERN__ void EPD_Display_Partial_Black(void);
+__ET011TT2_EXTERN__ void EPD_Display_Test_Bitmap(unsigned short *bmp);
+__ET011TT2_EXTERN__ void Upload_Temperature_LUT(void);
 __ET011TT2_EXTERN__ void EInk_Parameter_Initial(void);
 __ET011TT2_EXTERN__ void check_busy_high(void);// If BUSYN=0 then waiting
 __ET011TT2_EXTERN__ void check_busy_low(void);// If BUSYN=1 then waiting
 __ET011TT2_EXTERN__ unsigned char string_to_number(unsigned char Buf);
 
-__ET011TT2_EXTERN__ unsigned int byte_counter;
-__ET011TT2_EXTERN__ unsigned char dataBuff[5];
-__ET011TT2_EXTERN__ unsigned char hun;
-__ET011TT2_EXTERN__ unsigned char ten;
-__ET011TT2_EXTERN__ unsigned char sim;
-__ET011TT2_EXTERN__ unsigned int VcomOTP;
-__ET011TT2_EXTERN__ unsigned int WF_MODE;
-__ET011TT2_EXTERN__ unsigned char SPIdataBuff[1300];
+__ET011TT2_EXTERN__ void EPD_Rev();
+
+__ET011TT2_EXTERN__ void EPD_Status();
+__ET011TT2_EXTERN__ void EPD_TempSensor();
+
+
+// __ET011TT2_EXTERN__ unsigned char dataBuff[5];
+// __ET011TT2_EXTERN__ unsigned char hun;
+// __ET011TT2_EXTERN__ unsigned char ten;
+// __ET011TT2_EXTERN__ unsigned char sim;
+// __ET011TT2_EXTERN__ unsigned int VcomOTP;
+// __ET011TT2_EXTERN__ unsigned int WF_MODE;
+// __ET011TT2_EXTERN__ unsigned char SPIdataBuff[1300];
 
 #define  GU4_Mode 0x01
 #define  GC4_Mode 0x00
